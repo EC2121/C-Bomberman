@@ -4,8 +4,8 @@
 typedef struct vec2
 {
 
-    int x;
-    int y;
+    float x;
+    float y;
 
 } vec2_t;
 

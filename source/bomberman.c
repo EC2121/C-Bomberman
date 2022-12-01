@@ -21,7 +21,7 @@ static void bomberman_player_init(player_t *player)
     player->number_of_lifes = 1;
     player->number_of_bombs = 1;
     player->score = 0;
-    player->speed = 1;
+    player->speed = 100;
 }
 static int bomberman_graphics_init(SDL_Window **window, SDL_Renderer **renderer, SDL_Texture **texture)
 {
@@ -53,7 +53,7 @@ static int bomberman_graphics_init(SDL_Window **window, SDL_Renderer **renderer,
     int width;
     int height;
     int channels;
-    unsigned char *pixels = stbi_load("spr_zombie_idle.png", &width, &height, &channels, 4);
+    unsigned char *pixels = stbi_load("source/Textures/spr_zombie_idle.png", &width, &height, &channels, 4);
 
     if (!pixels)
     {
@@ -112,6 +112,9 @@ int main(int argc, char **argv)
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
+    double timeLast;
+    double timeNow = SDL_GetPerformanceCounter();
+    double deltaTime;
     if (bomberman_graphics_init(&window, &renderer, &texture))
     {
         return -1;
@@ -127,6 +130,9 @@ int main(int argc, char **argv)
     int x = 100;
     while (running)
     {
+        timeLast = timeNow;
+        timeNow = SDL_GetPerformanceCounter();
+        deltaTime = ((timeNow - timeLast) / SDL_GetPerformanceFrequency());
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -138,10 +144,11 @@ int main(int argc, char **argv)
         SDL_PumpEvents();
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-        player.pos.x += keys[SDL_SCANCODE_D] * player.speed;
-        player.pos.x += -keys[SDL_SCANCODE_A] * player.speed;
-        player.pos.y += keys[SDL_SCANCODE_S] * player.speed;
-        player.pos.y += -keys[SDL_SCANCODE_W] * player.speed;
+        player.pos.x += (keys[SDL_SCANCODE_D] * player.speed * deltaTime);
+        player.pos.x += -(keys[SDL_SCANCODE_A] * player.speed * deltaTime);
+        player.pos.y += (keys[SDL_SCANCODE_S] * player.speed * deltaTime);
+        player.pos.y += -(keys[SDL_SCANCODE_W] * player.speed * deltaTime);
+
 
 
         SDL_JoyAxisEvent joyEvent;
