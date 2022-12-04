@@ -4,6 +4,10 @@
 #include <SDL.h>
 #include "stb_image.h"
 
+
+
+
+double delta_time;
 static void bomberman_game_mode_init(game_mode_t *game_mode)
 {
     game_mode->timer = 60;
@@ -97,6 +101,7 @@ int CheckForJoysticks()
             else
             {
                 SDL_Log("Could not open gamecontroller %d: %s\n", i, SDL_GetError());
+                return -1;
             }
         }
     }
@@ -112,9 +117,8 @@ int main(int argc, char **argv)
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
-    double timeLast;
-    double timeNow = SDL_GetPerformanceCounter();
-    double deltaTime;
+    uint64_t timeLast;
+    uint64_t timeNow = SDL_GetPerformanceCounter();
     if (bomberman_graphics_init(&window, &renderer, &texture))
     {
         return -1;
@@ -130,9 +134,9 @@ int main(int argc, char **argv)
     int x = 100;
     while (running)
     {
-        timeLast = timeNow;
-        timeNow = SDL_GetPerformanceCounter();
-        deltaTime = ((timeNow - timeLast) / SDL_GetPerformanceFrequency());
+        delta_time = ((double)(SDL_GetTicks() - timeLast) /1000);
+        timeLast = SDL_GetTicks();
+        printf("FPS : %f\n",delta_time);
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -144,10 +148,10 @@ int main(int argc, char **argv)
         SDL_PumpEvents();
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-        player.pos.x += (keys[SDL_SCANCODE_D] * player.speed * deltaTime);
-        player.pos.x += -(keys[SDL_SCANCODE_A] * player.speed * deltaTime);
-        player.pos.y += (keys[SDL_SCANCODE_S] * player.speed * deltaTime);
-        player.pos.y += -(keys[SDL_SCANCODE_W] * player.speed * deltaTime);
+        player.pos.x += (keys[SDL_SCANCODE_D] * player.speed * delta_time);
+        player.pos.x += -(keys[SDL_SCANCODE_A] * player.speed * delta_time);
+        player.pos.y += (keys[SDL_SCANCODE_S] * player.speed * delta_time);
+        player.pos.y += -(keys[SDL_SCANCODE_W] * player.speed * delta_time);
 
 
 
