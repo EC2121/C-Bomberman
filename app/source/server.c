@@ -1,13 +1,5 @@
-#ifdef _WIN32
-#include <WinSock2.h>
-#include <ws2tcpip.h>
-#else
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#endif
-#include <stdio.h>
-#pragma comment(lib, "Ws2_32.lib")
+#include "server.h"
+
 int set_nb(int s) {
 #ifdef _WIN32
     unsigned long nb_mode = 1;
@@ -51,6 +43,6 @@ int init_socket() {
         printf("unable to bind the UDP socket \n");
         return -1;
     }
-   
+
     return *s;
 }
